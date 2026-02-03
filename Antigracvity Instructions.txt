@@ -1,0 +1,66 @@
+Build a branded personal landing page as a React 18 + Vite 6 + Tailwind CSS 3.4 single-page application. This is a "link-in-bio" style professional hub — mobile-first, centered column, card-based navigation. No router, no state library, no UI framework. Deploy target is Vercel static export.
+
+If reference config files (tailwind.config.js, vite.config.js, postcss.config.js, package.json, index.css) exist in the project, use them exactly. Otherwise generate them from the specs below.
+
+DESIGN SYSTEM
+
+Colors — background: #FDFCF9, primary: #1C1917, accent: #0A2540, secondary: #57534E, border: #E7E5E4, card: #FFFFFF.
+Fonts — sans: Inter, system-ui, sans-serif / serif: Playfair Display, Georgia, serif. Load via Google Fonts CDN in index.html.
+Content max-width — 520px centered (Tailwind key: "hub").
+Card shadows — card: "0 1px 3px 0 rgb(0 0 0 / 0.05)" / card-hover: "0 4px 12px -2px rgb(0 0 0 / 0.08)".
+Border radii — 3xl: 1.5rem, 4xl: 2rem.
+Body background — 135deg linear gradient: soft blue (rgba 147,197,253,0.3) top-left through warm center (#FDFCF9) to soft purple (rgba 167,139,250,0.25) bottom-right, plus a fixed radial vignette overlay via body::before with pointer-events:none at z-index:0.
+Modal animation — @keyframes fade-in: opacity 0 to 1, scale 0.95 to 1, 0.2s ease-out. Class: .animate-fade-in.
+
+PROJECT STRUCTURE
+
+index.html — HTML5 shell, Google Fonts link, SEO + OG + Twitter meta tags, <div id="root">, module script to /src/main.jsx.
+/public/ — headshot.jpg, favicon.svg, any brand icon PNGs (user adds manually).
+/src/main.jsx — createRoot, StrictMode, render App.
+/src/App.jsx — min-h-screen py-12 px-4 wrapper, max-w-hub mx-auto inner div, renders ProfileHeader then LinkHub then SocialFooter.
+/src/index.css — @tailwind base/components/utilities, body gradient + vignette, fade-in keyframes, @media print styles for resume export.
+/src/components/ — all components below.
+
+COMPONENT SPECS
+
+LinkCard.jsx — Reusable. Props: emoji, title, description, href, primary (bool), useCustomIcon (bool), liveIndicator (string or null). Renders as <a> (external links get target _blank). Classes: "group flex items-center gap-3 w-full max-w-md mx-auto p-3 rounded-2xl bg-white/80 backdrop-blur-sm border border-border shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-0.5". Left: 40x40 icon (emoji span or custom <img> rounded-lg). Center: title (font-medium text-sm text-primary group-hover:text-accent) + description (text-xs text-secondary truncate). Right: chevron SVG (w-4 h-4, group-hover:translate-x-0.5). If primary, add ring-2 ring-accent/20. If liveIndicator is set, show a pulsing dot (animate-ping) + text below description.
+
+ProfileHeader.jsx — Centered. Headshot: w-28 h-28 rounded-full ring-4 ring-white shadow-lg. Name: font-serif text-4xl md:text-5xl font-semibold text-primary. Bio: text-secondary text-lg max-w-md mx-auto. Optional badge/pill component below bio.
+
+LinkHub.jsx — Central state manager. Holds useState for each modal (isCalendarOpen, isResumeOpen, etc). Renders link cards from a data array, modal-trigger buttons styled identically to LinkCard, and all modal components with isOpen/onClose props.
+
+CalendarModal.jsx — Props: isOpen, onClose. If !isOpen return null. Fixed inset-0 z-50. Backdrop: absolute inset-0 bg-black/60 backdrop-blur-sm, onClick closes. Content: relative bg-white rounded-2xl shadow-2xl animate-fade-in, onClick stopPropagation. Header with title + X button. Body: iframe to [CLIENT_CALENDAR_URL]. useEffect for Escape key + body overflow hidden.
+
+ResumeModal.jsx — Props: isOpen, onClose. Same modal shell as CalendarModal but with: sticky header (name + contact + "Download PDF" button + close X), scrollable content area. Content sections: centered name block with AACI badge pill, summary paragraph, two-column grid (sm:grid-cols-2) for competencies and highlights, single-column experience entries, technical proficiencies, education. Sub-components defined in same file: CompetencyItem({text}), HighlightItem({text}), ExperienceEntry({company, location, title, dates, bullets, last}). "Download PDF" calls window.print(). Focus trap: useEffect cycling Tab between first/last focusable elements. Print-only header (className includes "hidden", shown via @media print).
+
+SocialFooter.jsx — Centered. border-t border-border/50. Row of SVG icon links (text-secondary hover:text-primary transition-colors). Copyright: text-xs text-secondary with dynamic year.
+
+PRINT / PDF STYLES (in index.css @media print)
+
+Hide everything except resume modal content. Remove modal chrome (backdrop, header bar, buttons). Show print-only header. Set body bg white, hide vignette. .resume-experience-entry: break-inside avoid. .resume-section-header: break-after avoid. Force all text black, borders light gray.
+
+ACCESSIBILITY
+
+Modals: role="dialog", aria-modal="true", aria-labelledby pointing to title id. Icon-only buttons: aria-label. Escape closes modals. Focus trap in resume modal. Body scroll lock when modal open. Heading hierarchy: h1 for name, h2 for sections, h3 for job titles. Decorative emojis: role="img" aria-hidden="true".
+
+BUILD ORDER
+
+1. Scaffold config files (package.json, vite.config.js, tailwind.config.js, postcss.config.js, index.html).
+2. Create src/main.jsx + src/index.css (Tailwind directives, gradient, vignette, animation).
+3. Create src/App.jsx layout wrapper.
+4. Build components: LinkCard → ProfileHeader → SocialFooter → CalendarModal → LinkHub → ResumeModal.
+5. Add @media print block to index.css.
+6. Run npm install, npm run dev, verify.
+
+PLACEHOLDERS — replace these with client content:
+
+[CLIENT_NAME] — full name
+[CLIENT_TAGLINE] — 1-2 line bio
+[CLIENT_EMAIL] — contact email
+[CLIENT_PHONE] — phone number
+[CLIENT_LOCATION] — city, state
+[CLIENT_WEBSITE] — domain
+[CLIENT_CALENDAR_URL] — booking iframe URL
+[LINK_CARDS] — array of {emoji, title, description, href} for each card
+[SOCIAL_LINKS] — platforms and URLs for footer icons
+[RESUME_CONTENT] — full resume organized by section

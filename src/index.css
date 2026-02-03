@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Body gradient with vignette overlay and salon background */
+body {
+  position: relative;
+  background:
+    linear-gradient(135deg,
+      rgba(147, 197, 253, 0.35) 0%,
+      rgba(253, 252, 249, 0.98) 50%,
+      rgba(167, 139, 250, 0.3) 100%),
+    url('/salon-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center,
+      transparent 0%,
+      rgba(0, 0, 0, 0.05) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Fade-in animation for modals */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Print styles for resume export */
+@media print {
+
+  body,
+  body::before {
+    background: white !important;
+  }
+
+  #root>div {
+    display: none;
+  }
+
+  .resume-modal-content {
+    display: block !important;
+    position: static !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .resume-modal-backdrop,
+  .resume-modal-header-bar,
+  .resume-close-button,
+  .resume-download-button {
+    display: none !important;
+  }
+
+  .resume-print-header {
+    display: block !important;
+  }
+
+  .resume-experience-entry {
+    break-inside: avoid;
+  }
+
+  .resume-section-header {
+    break-after: avoid;
+  }
+
+  * {
+    color: black !important;
+    border-color: #e5e7eb !important;
+  }
+}
