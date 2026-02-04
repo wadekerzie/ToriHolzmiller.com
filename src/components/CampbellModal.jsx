@@ -8,7 +8,8 @@ export default function CampbellModal({ isOpen, onClose }) {
         { src: '/campbell-2.jpg', alt: 'Campbell smiling in striped outfit' },
         { src: '/campbell-3.jpg', alt: 'Campbell in bouncer seat' },
         { src: '/campbell-4.jpg', alt: 'Campbell bath time' },
-        { src: '/campbell-5.jpg', alt: 'Campbell with dad' }
+        { src: '/campbell-5.jpg', alt: 'Campbell with dad' },
+        { src: '/campbell-6.jpg', alt: 'Campbell in adorable sloth pajamas' }
     ]
 
     useEffect(() => {
